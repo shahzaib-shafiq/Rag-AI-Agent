@@ -1,5 +1,5 @@
 def main():
-    print("Run the API with: uv run uvicorn app.main:app --reload")
+    print("Hello from fastapi-product!")
 
 
 if __name__ == "__main__":

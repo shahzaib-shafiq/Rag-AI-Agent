@@ -1,36 +1,35 @@
 from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
-from app.config import settings
-from app.database import Base, engine
-from app.routers import analyze, reviews
+from app.api.router import router
+from app.core.config import settings
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
-    Base.metadata.create_all(bind=engine)
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    print(f"Starting {settings.app_name}")
+
     yield
 
+    print(f"Stopping {settings.app_name}")
 
-app = FastAPI(title=settings.app_name, lifespan=lifespan)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.app_version,
+    debug=settings.debug,
+    lifespan=lifespan,
 )
-app.include_router(reviews.router)
-app.include_router(analyze.router)
+
+app.include_router(router)
 
 
-@app.get("/")
-def root():
-    return {"message": "Customer Feedback Analyzer API", "docs": "/docs"}
-
-
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+@app.get("/", tags=["Root"])
+async def root() -> dict[str, str]:
+    return {
+        "message": settings.app_name,
+        "version": settings.app_version,
+        "documentation": "/docs",
+    }
