@@ -10,6 +10,17 @@ class Settings(BaseSettings):
     debug: bool = True
     api_v1_prefix: str = "/api/v1"
 
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_embed_model: str = "nomic-embed-text"
+    ollama_chat_model: str = "llama3.2:1b"
+    chroma_persist_dir: str = "./data/chroma"
+    chroma_collection: str = "documents"
+    chunk_size: int = 1000
+    chunk_overlap: int = 200
+    rag_top_k: int = 6
+    rag_max_distance: float = 0.5
+    rag_max_query_length: int = 1000
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
