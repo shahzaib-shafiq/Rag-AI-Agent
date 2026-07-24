@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     rag_max_distance: float = 0.5
     rag_max_query_length: int = 1000
 
+    database_url: str = (
+        "postgresql+psycopg://postgres:postgres@localhost:5432/rag_ai"
+    )
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
